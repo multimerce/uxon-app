@@ -89,6 +89,12 @@ export const SEGMENT_CONDITIONS = {
                     { label: 'is not', value: 'isNot' },
                 ],
             },
+            {
+                label: null,
+                name: 'searchField',
+                type: 'textField',
+                subtype: 'text',
+            },
         ],
     },
 };
