@@ -25,8 +25,8 @@ export const SEGMENT_CONDITIONS = {
                     { label: 'United States', value: 'usa' },
                 ],
                 placeholder: 'Choose a country...',
-            }
-        ]
+            },
+        ],
     },
     websiteActivity: {
         blocks: [
@@ -38,7 +38,7 @@ export const SEGMENT_CONDITIONS = {
                     { label: 'Visited page', value: 'visitedPage' },
                     { label: 'Added to cart', value: 'addedToCart' },
                     { label: 'Placed order', value: 'placedOrder' },
-                ]
+                ],
             },
             {
                 label: null,
@@ -48,7 +48,7 @@ export const SEGMENT_CONDITIONS = {
                     { label: 'equals', value: 'equals' },
                     { label: 'is greater than', value: 'isGreaterThan' },
                     { label: 'is less than', value: 'isLessThan' },
-                ]
+                ],
             },
             {
                 label: null,
@@ -57,7 +57,7 @@ export const SEGMENT_CONDITIONS = {
                 options: [
                     { label: 'over all time', value: 'overAllTime' },
                     { label: 'in the last', value: 'inTheLast' },
-                ]
+                ],
             },
             {
                 label: null,
@@ -74,9 +74,9 @@ export const SEGMENT_CONDITIONS = {
                     { label: 'hours', value: 'hours' },
                     { label: 'days', value: 'days' },
                     { label: 'weeks', value: 'weeks' },
-                ]
-            }
-        ]
+                ],
+            },
+        ],
     },
     customerSegments: {
         blocks: [
@@ -87,10 +87,10 @@ export const SEGMENT_CONDITIONS = {
                 options: [
                     { label: 'is', value: 'is' },
                     { label: 'is not', value: 'isNot' },
-                ]
+                ],
             },
-        ]
-    }
+        ],
+    },
 };
 
 export const CONDITIONS_DEFAULT_VALUES = {
@@ -107,5 +107,5 @@ export const CONDITIONS_DEFAULT_VALUES = {
     },
     customerSegments: {
         customerSegment: 'is',
-    }
+    },
 };
