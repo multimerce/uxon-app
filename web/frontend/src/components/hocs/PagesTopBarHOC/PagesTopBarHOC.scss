@@ -1,0 +1,15 @@
+.TopBarWrapper {
+
+  .Polaris-Page--fullWidth {
+    padding: 0;
+
+    .Polaris-Page-Header {
+      padding: 0;
+      margin-bottom: 30px;
+
+      .Polaris-Page-Header__Row {
+        display: block;
+      }
+    }
+  }
+}
