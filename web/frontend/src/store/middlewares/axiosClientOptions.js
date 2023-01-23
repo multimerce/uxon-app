@@ -2,7 +2,7 @@ import axios from 'axios';
 import {createApp} from '@shopify/app-bridge';
 import {getSessionToken} from '@shopify/app-bridge-utils';
 
-const baseApiURL = `${process.env.HOST}/api/v1`;
+const baseApiURL = process.env.NODE_ENV === 'production' ? '/api/v1' :`${process.env.HOST}/api/v1`;
 
 export const axiosClientOptions = () => {
     const host = new URLSearchParams(window.location.search).get("host");
