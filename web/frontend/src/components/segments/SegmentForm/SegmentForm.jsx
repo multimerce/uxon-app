@@ -1,11 +1,16 @@
 import React, {useCallback} from 'react';
-import {TextStyle, FormLayout, TextField} from '@shopify/polaris';
+import {TextStyle, FormLayout, TextField, Icon, Stack} from '@shopify/polaris';
+import {AlertMinor} from '@shopify/polaris-icons';
 import SegmentConditionsList from '../SegmentConditionsList/SegmentConditionsList';
+import styles from './SegmentForm.module.scss';
 
-const SegmentForm = ({conditions, addCondition, removeCondition, setConditions, segmentName, setSegmentName}) => {
+const SegmentForm = (props) => {
+    const {conditions, addCondition, removeCondition, setConditions, segmentName, setSegmentName, errors} = props;
     const handleChangeName = useCallback((newName) => {
         setSegmentName(newName)
     }, [setSegmentName]);
+
+    const setErrors = (fieldName) => (errors && errors[fieldName]) && errors[fieldName];
 
     return (
         <FormLayout>
@@ -15,6 +20,7 @@ const SegmentForm = ({conditions, addCondition, removeCondition, setConditions, 
                 onChange={handleChangeName}
                 placeholder='Title'
                 autoComplete='off'
+                error={setErrors('name')}
             />
 
             <hr/>
@@ -29,6 +35,21 @@ const SegmentForm = ({conditions, addCondition, removeCondition, setConditions, 
                 removeCondition={removeCondition}
                 setConditions={setConditions}
             />
+
+            {
+                (errors && errors.hasOwnProperty('conditions')) &&
+                <Stack wrap={false} alignment='leading' vertical={false}>
+                    <div className={styles.ErrorIcon}>
+                        <Icon
+                            source={AlertMinor}
+                            color="critical"
+                        />
+                    </div>
+                    <TextStyle variation="negative">
+                        {setErrors('conditions')}
+                    </TextStyle>
+                </Stack>
+            }
 
         </FormLayout>
     );
