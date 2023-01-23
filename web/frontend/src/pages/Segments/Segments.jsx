@@ -1,13 +1,49 @@
-import { Page, Layout, Heading } from "@shopify/polaris";
+import React, {useCallback, useState} from 'react';
+import { Page, Layout, Tabs } from "@shopify/polaris";
+import SegmentsTable from '../../components/segmentsList/SegmentsTable/SegmentsTable';
+import IntegrateApp from "../../components/IntegrateApp/IntegrateApp";
 
-export default function Segments() {
+const Segments = ({title}) => {
+    const [selected, setSelected] = useState(0);
+
+    const handleTabChange = useCallback(
+        (selectedTabIndex) => setSelected(selectedTabIndex),
+        [],
+    );
+
+    const tabs = [
+        {
+            id: 'all',
+            content: 'All',
+        },
+        {
+            id: 'inUse',
+            content: 'In use',
+        },
+        {
+            id: 'ready',
+            content: 'Ready',
+        },
+        {
+            id: 'archived',
+            content: 'Archived',
+        },
+    ];
+
     return (
-        <Page narrowWidth>
+        <Page narrowWidth title={title}>
             <Layout>
                 <Layout.Section>
-                    <Heading>Segments</Heading>
+                    <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
+                        <SegmentsTable/>
+                    </Tabs>
+                </Layout.Section>
+                <Layout.Section>
+                    <IntegrateApp/>
                 </Layout.Section>
             </Layout>
         </Page>
     );
 };
+
+export default Segments;
