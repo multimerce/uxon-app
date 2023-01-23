@@ -1,1 +1,1 @@
-export * from './segment';
+export * from './segmentThunks';

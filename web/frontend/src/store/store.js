@@ -3,17 +3,16 @@ import thunk from 'redux-thunk';
 import {composeWithDevTools} from 'redux-devtools-extension/developmentOnly';
 import {createLogger} from 'redux-logger/src';
 import createRootReducers from './rootReducers';
-// import multiClientMiddleware from './middleware/axios';
+import multiClientMiddleware from './middlewares/reduxAxiosMiddleware';
 import {createBrowserHistory} from 'history';
-import {routerMiddleware} from 'connected-react-router';
 
 export const history = createBrowserHistory({
     basename: '/',
 });
 
 let applyMiddlewares;
-// const middleware = [thunk, multiClientMiddleware];
-const middleware = [thunk, routerMiddleware(history)];
+
+const middleware = [thunk, multiClientMiddleware];
 
 if (process.env.NODE_ENV !== 'production') {
     const logger = createLogger({
