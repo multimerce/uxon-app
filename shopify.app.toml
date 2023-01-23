@@ -1,3 +1,10 @@
 # This file stores configurations for your Shopify app.
 
-scopes = "write_products,write_pixels,read_customer_events"
+# scopes = "write_products,write_pixels,read_customer_events"
+[env]
+PORT = "8000"
+HOST = "https://uxon.ai"
+NODE_ENV = "production"
+SHOPIFY_API_KEY = "ac827e7f69d45ab553d25c81a8a78c43"
+SHOPIFY_API_SECRET = "e0ccf20d91c90d9697d084628e92bdf3"
+SCOPES = "write_products,write_pixels,read_customer_events"
