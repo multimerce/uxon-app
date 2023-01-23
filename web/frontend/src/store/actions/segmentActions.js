@@ -3,18 +3,27 @@ import {createRequestAction} from '../common';
 
 const PREFIX = 'SINGLE_SEGMENT';
 
-export const fetchSegmentAction = createRequestAction(`${PREFIX}/FETCH`, (id) => ({
-    request: {
-        url: `/api/v1/segments/${id}`,
-    },
-}));
-
 export const createSegmentAction = createRequestAction(`${PREFIX}/CREATE`, (data) => ({
     request: {
         method: 'POST',
-        url: `/api/v1/segments`,
+        url: `/segments`,
         data: {
             segmentData: data,
         },
     },
 }));
+
+export const fetchSegmentAction = createRequestAction(`${PREFIX}/FETCH`, (id) => ({
+    request: {
+        url: `/segments/${id}`,
+    },
+}));
+
+export const updateSegmentAction = createRequestAction(`${PREFIX}/UPDATE`, (id, data) => ({
+    request: {
+        method: 'PATCH',
+        url: `/segments/${id}`,
+        data,
+    },
+}));
+
