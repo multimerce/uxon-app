@@ -4,10 +4,6 @@ import SegmentConditionsCard from '../SegmentConditionsCard/SegmentConditionsCar
 const SegmentConditionsList = (props) => {
     const {conditionsCards = []} = props;
 
-    if (conditionsCards.length === 0) {
-        conditionsCards.push({});
-    }
-
     const renderConditionsCards = useMemo(
         () => conditionsCards.map((card, index) => {
             const hasPreviousCond = (conditionsCards.length - 1) === index;

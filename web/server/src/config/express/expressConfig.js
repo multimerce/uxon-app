@@ -4,6 +4,7 @@ const { readFileSync } = require('fs');
 const serveStatic = require('serve-static');
 const routes = require('../../routes');
 const shopify = require('../shopify/shopifyConfig');
+const {getSessionMiddleware} = require('../../middlewares/getCurrentSession');
 const { afterAuth, refreshAccessToken } = require('../../middlewares/afterAuth');
 // const GDPRWebhookHandlers = require('../../../gdpr');
 
@@ -13,6 +14,9 @@ const STATIC_PATH =
     process.env.NODE_ENV === "production"
         ? `${path.resolve(__dirname, '../../../..', 'frontend/dist')}`
         : `${path.resolve(__dirname, '../../../..', 'frontend')}`;
+
+/** Set Session */
+expressConfig.use(getSessionMiddleware);
 
 /** Set up Shopify authentication and webhook handling */
 expressConfig.get(shopify.config.auth.path, refreshAccessToken, shopify.auth.begin());
@@ -29,11 +33,11 @@ expressConfig.get(
 //     shopify.processWebhooks({ webhookHandlers: GDPRWebhookHandlers })
 // );
 
-expressConfig.use('/api/*', shopify.validateAuthenticatedSession());
+// expressConfig.use('/api/*', shopify.validateAuthenticatedSession(/*shopify, */));
 
 expressConfig.use(express.json());
 
-expressConfig.use('api/v1', routes);
+expressConfig.use('/api/v1', routes);
 
 expressConfig.use(serveStatic(STATIC_PATH, { index: false }));
 

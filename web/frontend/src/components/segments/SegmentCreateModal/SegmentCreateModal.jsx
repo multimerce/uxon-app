@@ -3,34 +3,65 @@ import {connect} from 'react-redux';
 import {Modal} from '@shopify/polaris';
 import {createStructuredSelector} from 'reselect';
 import SegmentForm from '../SegmentForm/SegmentForm';
+import {segmentValidationsSchema} from '../../../utils/validators';
 import {segmentSelector, isLoading, createSegment, fetchSegment} from '../../../store';
 
-const SegmentCreateModal = ({isOpenForm = false, closeForm, createNewSegment, fetchSegmentData}) => {
-    const [segmentData, setSegmentData] = useState({});
-    const [conditions, setConditions] = useState([]);
+const SegmentCreateModal = ({isOpenForm = false, closeForm, createNewSegment}) => {
+    const [conditions, setConditions] = useState([{}]);
     const [segmentName, setSegmentName] = useState('');
+    const [segmentErrors, setSegmentsErrors] = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        setSegmentsErrors(null);
+    }, [conditions, segmentName, setSegmentsErrors])
 
     const addCondition = useCallback((newConditions) => {
         setConditions((prevState) => [...prevState, {...newConditions}]);
-    }, [setConditions]);
+    }, [setConditions, setSegmentsErrors]);
 
     const removeCondition = useCallback((index) => {
-        setConditions((prevState) => prevState.filter((item, i) => index !== i));
+        if (index === 0) {
+            setConditions([{}]);
+        } else {
+            setConditions((prevState) => prevState.filter((item, i) => index !== i));
+        }
     }, [setConditions]);
 
-    const [isOpen, setIsOpen] = useState(false);
-
-    const handleOnClose = useCallback(() => {
-        setConditions([]);
+    const onCloseActions = useCallback(() => {
+        setSegmentsErrors(null);
+        setConditions([{}]);
+        setSegmentName('');
         closeForm(false);
-    }, [closeForm, setConditions]);
+    }, [closeForm, setSegmentName, setConditions, setSegmentsErrors]);
 
-    const handleOnSave = useCallback(() => {
-        // setConditions((prevState) => prevState.filter((item) => item.hasOwnProperty('conditionType')));
+    const handleOnClose = () => onCloseActions();
+
+    const handleOnSave = useCallback(async () => {
         const newData = {name: segmentName, conditions};
-        createNewSegment(newData)
-        closeForm(false);
-    }, [closeForm, segmentName, conditions]);
+
+        await segmentValidationsSchema
+            .validate(newData, { abortEarly: false })
+            .then((res) => {
+                setSegmentsErrors(null);
+                createNewSegment(newData);
+                onCloseActions();
+            })
+            .catch((err) => {
+                const errors = err.inner.reduce((acc, item) => {
+                    let path;
+                    if (item?.path && item.path.startsWith("conditions")) {
+                        path = "conditions";
+                    } else {
+                        path = item.path;
+                    }
+                    acc[path] = item.message;
+                    return acc;
+                }, {});
+
+                setSegmentsErrors(errors);
+            });
+    }, [segmentName, conditions, createNewSegment, onCloseActions, setSegmentsErrors]);
 
     useEffect(() => {
         if (typeof isOpenForm !== 'undefined') {
@@ -58,6 +89,7 @@ const SegmentCreateModal = ({isOpenForm = false, closeForm, createNewSegment, fe
                         setConditions={setConditions}
                         segmentName={segmentName}
                         setSegmentName={setSegmentName}
+                        errors={segmentErrors}
                     />
                 </Modal.Section>
             </Modal>

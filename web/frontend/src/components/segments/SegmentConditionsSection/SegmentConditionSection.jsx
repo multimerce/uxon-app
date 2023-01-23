@@ -1,12 +1,12 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback} from 'react';
 import {Stack} from '@shopify/polaris';
 import {SEGMENT_CONDITIONS} from '../../../common/constants/constants';
 import FormSelect from "../../common/FormSelect/FormSelect";
 import FormTextField from "../../common/FormTextField/FormTextField";
 
-const SegmentConditionSection = ({conditionType, addConditions, conditions}) => {
+const SegmentConditionSection = ({conditionType, addConditions, conditions,  index}) => {
     const renderConditionsSelects = useCallback(() => {
-        return SEGMENT_CONDITIONS[conditionType].blocks.map((block, index) => {
+        return SEGMENT_CONDITIONS[conditionType].blocks.map((block, i) => {
             if (conditionType === 'websiteActivity'
                 && conditions.period === 'overAllTime'
                 && (block.name === 'duration' || block.name === 'unitOfTime')) {
@@ -17,7 +17,8 @@ const SegmentConditionSection = ({conditionType, addConditions, conditions}) => 
                 case 'select':
                     return (
                         <FormSelect
-                            key={index}
+                            key={i}
+                            index={index}
                             name={block.name}
                             isLabelHidden={true}
                             label={block.label}
@@ -29,7 +30,8 @@ const SegmentConditionSection = ({conditionType, addConditions, conditions}) => 
                 case 'textField':
                     return (
                         <FormTextField
-                            key={index}
+                            key={i}
+                            index={index}
                             name={block.name}
                             subtype={block.subtype}
                             isLabelHidden={true}
@@ -42,7 +44,7 @@ const SegmentConditionSection = ({conditionType, addConditions, conditions}) => 
                     return null;
             }
         });
-    }, [SEGMENT_CONDITIONS, conditionType, conditions, addConditions])
+    }, [SEGMENT_CONDITIONS, conditionType, conditions, addConditions, index])
 
     return (
         <Stack distribution="fill" wrap={false}>

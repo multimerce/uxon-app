@@ -1,8 +1,9 @@
 import React, {useCallback, useState} from 'react';
-import {Page, Layout, CalloutCard, Button, Card, Stack, TextStyle} from '@shopify/polaris';
+import {Page, Layout, CalloutCard} from '@shopify/polaris';
 import './Dashboard.scss';
 import DashboardIcon from '../../assets/images/dashboardIcon2.png';
 import SegmentCreateModal from '../../components/segments/SegmentCreateModal/SegmentCreateModal';
+import IntegrateApp from '../../components/IntegrateApp/IntegrateApp';
 
 const Dashboard = ({title}) => {
     const [isOpenForm, setIsOpenForm] = useState(false);
@@ -29,18 +30,7 @@ const Dashboard = ({title}) => {
                     </CalloutCard>
                 </Layout.Section>
                 <Layout.Section>
-                    <Card sectioned>
-                        <Stack alignment='center'>
-                            <Stack.Item fill>
-                                <TextStyle>
-                                    Integrate you app
-                                </TextStyle>
-                            </Stack.Item>
-                            <Stack.Item>
-                                <Button>Learn how</Button>
-                            </Stack.Item>
-                        </Stack>
-                    </Card>
+                    <IntegrateApp/>
                 </Layout.Section>
             </Layout>
 

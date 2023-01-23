@@ -1,5 +1,8 @@
 type="frontend"
 
+[env]
+SHOPIFY_API_KEY = "ac827e7f69d45ab553d25c81a8a78c43"
+
 [commands]
 dev = "npm run dev"
 build = "npm run build"

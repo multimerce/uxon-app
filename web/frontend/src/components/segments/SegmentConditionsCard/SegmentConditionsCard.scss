@@ -2,6 +2,20 @@
   margin-bottom: 1rem;
 }
 
+.Separator {
+  margin-bottom: 0.9rem;
+}
+
+.Separator__dashedLine {
+  width: 100%;
+  padding-top: 1rem;
+  border-bottom: 1px rgb(198, 194, 191) dashed;
+}
+
 .OrButton {
   margin-top: 0.9rem;
+}
+
+.OrButton__disable {
+  opacity: 0;
 }

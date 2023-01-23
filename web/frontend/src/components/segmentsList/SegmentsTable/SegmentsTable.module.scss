@@ -1,0 +1,15 @@
+.FiltersContainer {
+  display: flex;
+  padding: 16px;
+}
+
+.FiltersContainer__select {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.Popover {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+}

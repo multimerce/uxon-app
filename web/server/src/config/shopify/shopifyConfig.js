@@ -7,6 +7,11 @@ const { restResources } = require(`@shopify/shopify-api/rest/admin/${LATEST_API_
 const shopify = shopifyApp({
     api: {
         apiVersion: LATEST_API_VERSION,
+        apiKey: process.env.SHOPIFY_API_KEY,
+        apiSecretKey: process.env.SHOPIFY_API_SECRET,
+        scopes: [`${process.env.SCOPES}`],
+        isEmbeddedApp: true,
+        hostName: process.env.HOST?.replace(/https:\/\//, '') || '',
         restResources,
         billing: undefined, // or replace with billingConfig above to enable example billing
     },

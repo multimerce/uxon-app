@@ -1,48 +1,152 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Card, FormLayout, Icon, Select, Stack, TextStyle} from '@shopify/polaris';
-import {CancelMajor, MobilePlusMajor} from '@shopify/polaris-icons';
-import SegmentConditionSection from '../SegmentConditionsSection/SegmentConditionSection';
-import {SEGMENT_CONDITIONS_TYPES, CONDITIONS_DEFAULT_VALUES} from '../../../common/constants/constants';
+import {Button, Card, Icon, Stack, TextStyle} from '@shopify/polaris';
+import {MobilePlusMajor} from '@shopify/polaris-icons';
+import {CONDITIONS_DEFAULT_VALUES} from '../../../common/constants/constants';
 import './SegmentConditionsCard.scss';
+import SegmentConditionsStack from '../SegmentConditionsStack/SegmentConditionsStack';
 
-const SegmentConditionsCard = ({
-                                   index,
-                                   conditionsCard,
-                                   hasPreviousCond,
-                                   addCondition,
-                                   removeCondition,
-                                   setConditions
-                               }) => {
-    const [conditionsList, setConditionsList] = useState({});
-    const [conditionType, setConditionType] = useState();
+const INIT_ADD_COND_STATE = {
+    hasAddCond: false,
+    isAddCond: true,
+};
 
+const SegmentConditionsCard = (props) => {
+    const {
+        index,
+        conditionsCard,
+        hasPreviousCond,
+        addCondition,
+        removeCondition,
+        setConditions,
+    } = props;
+    const [hasAdditionalCond, setHasAdditionalCond] = useState(INIT_ADD_COND_STATE.hasAddCond);
+
+    //TODO: check if orList is an object
     useEffect(() => {
-        setConditionsList(conditionsCard);
-        if (!!conditionsCard.conditionType) {
-            setConditionType(conditionsCard.conditionType);
+        if (conditionsCard.hasOwnProperty('orList') && conditionsCard.orList?.length > 0) {
+            setHasAdditionalCond(true);
+        } else {
+            setHasAdditionalCond(false);
         }
-    }, [conditionsCard, setConditionsList, setConditionType]);
+    }, [conditionsCard, conditionsCard.orList, setHasAdditionalCond]);
+
+
+    const handleAddNewCard = () => addCondition({});
+
+    const handleRemoveCard = () => removeCondition(index);
+
+    const handleRemoveAddCond = (condIndex) => {
+        setConditions((prevState) => prevState.map((cond, i) => {
+            if (index === i) {
+                const newOrList = cond?.orList.filter((_, addIndex) => addIndex !== condIndex);
+
+                return {
+                    ...cond,
+                    orList: newOrList
+                }
+            } else {
+                return cond;
+            }
+        }));
+    };
 
     const handleSelectType = useCallback(
-        (value) => {
+        (value, condIndex) => {
             const newCond = {
                 conditionType: value,
                 ...CONDITIONS_DEFAULT_VALUES[value],
             };
-            setConditionType(value);
-            setConditionsList(newCond);
-            setConditions((prevState) => prevState.map((cond, i) => index === i ? newCond : cond));
+            setConditions((prevState) => prevState.map((cond, i) => condIndex === i ? newCond : cond));
         },
-        [setConditionType, setConditionsList, setConditions],
+        [setConditions],
     );
 
-    const handleAddNewCard = useCallback(() => {
-        addCondition({});
-    }, [conditionsList, addCondition]);
+    const handleSelectAddType = useCallback(
+        (value, condIndex) => {
+            const newCond = {
+                conditionType: value,
+                ...CONDITIONS_DEFAULT_VALUES[value],
+            };
 
-    const handleRemoveCard = useCallback(() => {
-        removeCondition(index);
-    }, [removeCondition])
+            setConditions((prevState) => prevState.map((cond, i) => {
+                if (index === i) {
+                    const newOrList = cond?.orList.map((addCond, addCondIndex) =>
+                        addCondIndex === condIndex ? newCond : addCond);
+                    return {
+                        ...cond,
+                        orList: newOrList
+                    }
+                } else {
+                    return cond;
+                }
+            }));
+        },
+        [setConditions, index],
+    );
+
+    const handleSetConditions = useCallback(
+        (value, conditionName, condIndex) => {
+            setConditions((prevState) => prevState.map((cond, i) => {
+                if (condIndex === i) {
+                    return {
+                        ...cond,
+                        [conditionName]: value,
+                    }
+                } else {
+                    return cond;
+                }
+            }));
+        },
+        [setConditions],
+    );
+
+    const handleSetAddConditions = useCallback(
+        (value, conditionName, condIndex) => {
+
+            setConditions((prevState) => prevState.map((cond, i) => {
+                if (index === i) {
+                    const newOrList = cond?.orList.map((addCond, addCondIndex) =>
+                        addCondIndex === condIndex ? {...addCond, [conditionName]: value,} : addCond);
+                    return {
+                        ...cond,
+                        orList: newOrList
+                    }
+                } else {
+                    return cond;
+                }
+            }));
+        },
+        [setConditions, index],
+    );
+
+    const handleOr = useCallback(() => {
+        setConditions((prevState) => prevState.map((cond, i) => {
+            return (index === i ? {...cond, orList: [ ...cond.orList, {}]} : cond);
+        }));
+    }, [setConditions]);
+
+    const {hasAddCond, isAddCond} = INIT_ADD_COND_STATE;
+
+    const renderAdditionalConditions = () => {
+        const addCondArr = conditionsCard?.orList || [];
+
+        return addCondArr.map((condItem, i) => {
+            return (
+                <SegmentConditionsStack
+                    key={i}
+                    index={i}
+                    isAddCond={isAddCond}
+                    conditionsCard={condItem}
+                    hasAdditionalCond={hasAddCond}
+                    handleRemoveCard={handleRemoveAddCond}
+                    handleSelectType={handleSelectAddType}
+                    handleSetConditions={handleSetAddConditions}
+                    handleOr={handleOr}
+                    additionalCondLength={addCondArr?.length - 1}
+                />
+            );
+        });
+    };
 
     const placeholder = <TextStyle variation="subdued">Set type...</TextStyle>
 
@@ -50,52 +154,22 @@ const SegmentConditionsCard = ({
         <div className="ConditionCard">
             <Stack vertical distribution='fill'>
                 <Card sectioned>
-                    <Stack alignment='center' wrap={false}>
-                        <Stack.Item fill>
-                            <FormLayout>
-                                <Select
-                                    labelHidden
-                                    label='Segment name'
-                                    options={SEGMENT_CONDITIONS_TYPES}
-                                    value={conditionType}
-                                    placeholder='Please, select a condition type...'
-                                    onChange={handleSelectType}
-                                />
+                    <SegmentConditionsStack
+                        index={index}
+                        isAddCond={!isAddCond}
+                        conditionsCard={conditionsCard}
+                        hasAdditionalCond={hasAdditionalCond}
+                        handleRemoveCard={handleRemoveCard}
+                        handleSelectType={handleSelectType}
+                        handleSetConditions={handleSetConditions}
+                        handleOr={handleOr}
+                        additionalCondLength={0}
+                    />
 
-                                {
-                                    conditionType &&
-                                    <SegmentConditionSection
-                                        conditionType={conditionType}
-                                        addConditions={setConditionsList}
-                                        conditions={conditionsList}
-                                    />
-                                }
-
-                            </FormLayout>
-                        </Stack.Item>
-
-                        {
-                            conditionType &&
-                            <Stack.Item>
-                                <FormLayout>
-                                    <Stack distribution='center' spacing='baseTight'>
-                                        <Button icon={CancelMajor} plain onClick={handleRemoveCard}/>
-                                    </Stack>
-
-                                    <div className='OrButton'>
-                                        <Button disabled>
-                                            <TextStyle variation='strong'>
-                                                OR
-                                            </TextStyle>
-                                        </Button>
-                                    </div>
-                                </FormLayout>
-                            </Stack.Item>
-                        }
-                    </Stack>
+                    {renderAdditionalConditions()}
                 </Card>
 
-                <Button disabled={!conditionType || !hasPreviousCond} onClick={handleAddNewCard}>
+                <Button disabled={!conditionsCard?.conditionType || !hasPreviousCond} onClick={handleAddNewCard}>
                     <Stack alignment='center' spacing='tight'>
                         <Icon source={MobilePlusMajor}/>
                         <TextStyle variation='strong'>
