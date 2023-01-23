@@ -103,6 +103,7 @@ export const CONDITIONS_DEFAULT_VALUES = {
     userLocation: {
         user: 'is',
         country: 'canada',
+        orList: [],
     },
     websiteActivity: {
         userHas: 'visitedPage',
@@ -110,8 +111,10 @@ export const CONDITIONS_DEFAULT_VALUES = {
         period: 'overAllTime',
         duration: 30,
         unitOfTime: 'days',
+        orList: [],
     },
     customerSegments: {
         customerSegment: 'is',
+        orList: [],
     },
 };
