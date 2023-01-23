@@ -7,13 +7,13 @@ const baseApiURL = `${process.env.HOST}`;
 export const axiosClientOptions = () => {
     const host = new URLSearchParams(window.location.search).get("host");
 
-    const app = createApp({
+    const appConfig = createApp({
         apiKey: process.env.SHOPIFY_API_KEY,
         host,
     });
 
     const setSessionToken = async (_, req) => {
-        const sessionToken = await getSessionToken(app);
+        const sessionToken = await getSessionToken(appConfig);
         req.headers['Authorization'] = `Bearer ${sessionToken}`;
         return req;
     };
