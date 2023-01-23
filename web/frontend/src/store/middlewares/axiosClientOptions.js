@@ -1,5 +1,5 @@
 import axios from 'axios';
-import createApp from '@shopify/app-bridge';
+import {createApp} from '@shopify/app-bridge';
 import {getSessionToken} from '@shopify/app-bridge-utils';
 
 const baseApiURL = `${process.env.HOST}`;
