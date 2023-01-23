@@ -6,6 +6,17 @@ body {
     box-shadow: rgba(55,63,71,0.05) 0 0 0 1px,rgba(55,63,71,0.16) 0 1px 4px !important;
 }
 
+.Polaris-Tag {
+    border-radius: 20px !important;
+    text-transform: capitalize;
+}
+
+@media (min-width: 48.0625em) {
+    .Polaris-Modal-Dialog__Modal {
+        max-width: 45rem !important;
+    }
+}
+
 [data-lock-scrolling] {
     overflow-y: auto !important;
 }
