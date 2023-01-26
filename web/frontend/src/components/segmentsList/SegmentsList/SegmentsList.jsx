@@ -8,8 +8,12 @@ import './SegmentsList.scss';
 
 const SegmentsList = ({segmentsList, fetchSegmentsList}) => {
     const [selected, setSelected] = useState(0);
+    const [segments, setSegments] = useState({})
 
-    const segments = segmentsList;
+    useEffect(() => {
+        const preparedSegments = segmentsList.data.map((item) => ({...item, id: item._id})) || [];
+        setSegments({...segmentsList, data: preparedSegments})
+    }, [setSegments, segmentsList]);
 
     useEffect(() => {
         fetchSegmentsList({
