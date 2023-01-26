@@ -7,17 +7,40 @@ import {
     useIndexResourceState,
     Button,
 } from '@shopify/polaris';
+import {connect} from 'react-redux';
+import {createStructuredSelector} from 'reselect';
+import {changeSegmentStatus, deleteSegment, duplicateSegment} from '../../../store';
+import SegmentsTableRow from '../SegmentsTableRow/SegmentsTableRow';
+import {SEGMENTS_STATUSES} from '../../../common/constants/constants';
+import SegmentCreateModal from '../../segments/SegmentCreateModal/SegmentCreateModal';
 import styles from './SegmentsTable.module.scss';
-import SegmentsTableRow from "../SegmentsTableRow/SegmentsTableRow";
 
-const SegmentsTable = ({segmentsList = []}) => {
+const SegmentsTable = ({segmentsList = [], onDelete, onChangeStatus, onDuplicate}) => {
     const [segments, setSegments] = useState([]);
     const [queryValue, setQueryValue] = useState('');
     const [sortValue, setSortValue] = useState('name');
+    const [selectedSegment, setSelectedSegment] = useState(null);
+    // const [isActionsDisable, setIsActionsDisable] = useState(false);
+    const [isOpenForm, setIsOpenForm] = useState(false);
+
+    useEffect(() => {
+        setSegments((prevState) => prevState.sort((segA, segB) => segB[sortValue] - segA[sortValue]));
+    }, [sortValue, queryValue, segments])
 
     useEffect(() => {
         setSegments(segmentsList);
-    }, [segmentsList]);
+    }, [setSegments, segmentsList]);
+
+
+    useEffect(() => {
+        if (!isOpenForm) {
+            setSelectedSegment(null);
+        }
+    }, [isOpenForm, segmentsList, setSelectedSegment]);
+
+    // useEffect(() => {
+    //     setIsActionsDisable(false);
+    // }, [setIsActionsDisable]);
 
     const {selectedResources, allResourcesSelected, handleSelectionChange} = useIndexResourceState(segments);
 
@@ -26,22 +49,40 @@ const SegmentsTable = ({segmentsList = []}) => {
         plural: 'segments',
     };
 
+    const editStatus = useCallback((id) => {
+        const prevStatus = segments.find((segment) => segment.id === id).status;
+        const newStatus = prevStatus === SEGMENTS_STATUSES[0] ? SEGMENTS_STATUSES[1] : SEGMENTS_STATUSES[0];
+
+        onChangeStatus(id, newStatus)
+    }, [segments, onChangeStatus]);
+
+    const handleCreate = useCallback(() => {
+        setIsOpenForm(true);
+    }, [setIsOpenForm]);
+
     const bulkActions = [
         {
+            id: 'edit',
             content: 'Edit',
-            onAction: () => console.log('Edit segment'),
+            onAction: (id) => {
+                setSelectedSegment(id);
+                setIsOpenForm(true);
+            },
         },
         {
+            id: 'delete',
             content: 'Delete',
-            onAction: () => console.log('Delete segment'),
+            onAction: (id) => onDelete(id),
         },
         {
+            id: 'duplicate',
             content: 'Duplicate',
-            onAction: () => console.log('Duplicate segment'),
+            onAction: (id) => onDuplicate(id),
         },
         {
+            id: 'status',
             content: 'Archive',
-            onAction: () => console.log('Archive segment'),
+            onAction: (id) => editStatus(id),
         },
     ];
 
@@ -54,11 +95,11 @@ const SegmentsTable = ({segmentsList = []}) => {
         {label: 'Size', value: 'size'},
     ];
 
-    const handleQueryValueRemove = useCallback(() => setQueryValue(null), []);
+    const handleQueryValueRemove = useCallback(() => setQueryValue(''), [setQueryValue]);
     const handleClearAll = useCallback(() => {
         handleQueryValueRemove();
     }, [handleQueryValueRemove]);
-    const handleSortChange = useCallback((value) => setSortValue(value), []);
+    const handleSortChange = useCallback((value) => setSortValue(value), [setSortValue]);
 
     const renderTableRows = useMemo(() => {
         return (
@@ -73,6 +114,8 @@ const SegmentsTable = ({segmentsList = []}) => {
                         status={status}
                         size={size}
                         bulkActions={bulkActions}
+                        // isActionsDisable={isActionsDisable}
+                        // setIsActionsDisable={setIsActionsDisable}
                     />
             )
         )
@@ -100,7 +143,7 @@ const SegmentsTable = ({segmentsList = []}) => {
                         onChange={handleSortChange}
                     />
                 </div>
-                <Button primary>Create</Button>
+                <Button primary onClick={handleCreate}>Create</Button>
             </div>
 
             <IndexTable
@@ -111,18 +154,31 @@ const SegmentsTable = ({segmentsList = []}) => {
                 }
                 onSelectionChange={handleSelectionChange}
                 hasMoreItems
-                // bulkActions={bulkActions}
-                // lastColumnSticky
                 headings={[
                     {title: 'Name'},
                     {title: 'Status'},
                     {title: 'Size'},
                 ]}
+                selectable={false}
             >
                 {renderTableRows}
             </IndexTable>
+
+            <SegmentCreateModal
+                isOpenForm={isOpenForm}
+                closeForm={setIsOpenForm}
+                segment={segments.find(({id}) => id === selectedSegment)}
+            />
         </Card>
     );
 };
 
-export default SegmentsTable;
+const mapState = createStructuredSelector({});
+
+const mapDispatch = {
+    onDelete: deleteSegment,
+    onChangeStatus: changeSegmentStatus,
+    onDuplicate: duplicateSegment,
+};
+
+export default connect(mapState, mapDispatch)(SegmentsTable);
