@@ -118,3 +118,5 @@ export const CONDITIONS_DEFAULT_VALUES = {
         orList: [],
     },
 };
+
+export const SEGMENTS_STATUSES = ['archived', 'ready', 'inUse'];
