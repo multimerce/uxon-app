@@ -10,26 +10,27 @@ const initialState = {
     data: {},
 };
 
-const fetchSegmentSuccessHandler = (state, { payload }) => {
-    const data = { ...(payload || {}) };
+const fetchSegmentSuccessHandler = (state, {payload}) => {
+    const data = {...(payload || {})};
+
     return {
         ...state,
         data,
-        originSegmentData: { ...data },
+        originSegmentData: {...data},
         isLoading: false,
     };
 };
 
-const createSegmentSuccessHandler = (state, { payload }) => ({
+const createSegmentSuccessHandler = (state, {payload}) => ({
     ...state,
-    isLoading: false,
     data: {
         ...get(state, 'data', {}),
         ...(payload || {}),
     },
+    isLoading: false,
 });
 
-const fetchSegmentFailHandler = (state, { error }) => ({
+const fetchSegmentFailHandler = (state, {error}) => ({
     ...state,
     error: true,
     isLoading: false,
@@ -55,11 +56,13 @@ const flushStateHandler = () => initialState;
 
 export const segment = handleActions(
     {
-        [combineActions(fetchSegmentAction, createSegmentAction)]: requestHandler,
+        [combineActions(fetchSegmentAction, createSegmentAction/*, updateSegmentAction*/)]: requestHandler,
         [combineActions(fetchSegmentAction.fail)]: requestFailHandler,
+
         [fetchSegmentAction.success]: fetchSegmentSuccessHandler,
-        [createSegmentAction.success]: createSegmentSuccessHandler,
         [fetchSegmentAction.fail]: fetchSegmentFailHandler,
+
+        [createSegmentAction.success]: createSegmentSuccessHandler,
         [createSegmentAction.fail]: createSegmentFailHandler,
     },
     initialState,
