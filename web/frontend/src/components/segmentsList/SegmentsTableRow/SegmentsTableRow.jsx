@@ -1,24 +1,51 @@
-import React, {useState} from 'react';
-import {ActionList, Button, Icon, IndexTable, Popover, Tag, TextStyle} from "@shopify/polaris";
+import React, {useMemo} from 'react';
+import classNames from 'classnames';
+import {IndexTable, TextStyle, Badge} from "@shopify/polaris";
+import TableRowPopover from '../../common/TableRowPopover/TableRowPopover';
+import {SEGMENTS_STATUSES} from '../../../common/constants/constants';
 import styles from "../SegmentsTable/SegmentsTable.module.scss";
-import {MobileVerticalDotsMajor} from "@shopify/polaris-icons";
 
-const SegmentsTableRow = ({id, index, selectedResources, name, status, size = 0, bulkActions}) => {
-    const [isActionsActive, setIsActionsActive] = useState(false);
-    const toggleActionsList = () => {
-        setIsActionsActive((status) => !status);
-    };
-    const activator = (
-        <div onClick={(event) => event.stopPropagation()}>
-            <Button
-                plain
-                icon={<Icon source={MobileVerticalDotsMajor} color="critical" />}
-                onClick={toggleActionsList}
-                ariaHaspopup
-                disabled={false}
-            />
-        </div>
-    );
+const SegmentsTableRow = (props) => {
+    const {
+        id,
+        index,
+        selectedResources,
+        name,
+        status,
+        size = 0,
+        // isActionsDisable,
+        bulkActions,
+        // setIsActionsDisable
+    } = props;
+
+    /**
+     * @description Set content for set status action
+     * @returns {Array} - Array of objects - Action list items
+     */
+    const actions = useMemo(() => {
+        if (bulkActions?.length) {
+            return bulkActions.map((item) => (
+                item.id === 'status' ? {
+                    ...item,
+                    content: status === SEGMENTS_STATUSES[0] ? SEGMENTS_STATUSES[1] : SEGMENTS_STATUSES[0],
+                } : item
+            ));
+        }
+    }, [bulkActions]);
+
+    const badgeStatus = useMemo(() => {
+        switch (status) {
+            case SEGMENTS_STATUSES[1]:
+                return 'info'
+            case SEGMENTS_STATUSES[2]:
+                return 'success'
+            default:
+                return null
+        }
+    }, [status]);
+
+    // const classnames = classNames(styles.Popover, isActionsDisable && styles.Popover__disable);
+    const classnames = classNames(styles.Popover);
 
     return (
         <IndexTable.Row
@@ -33,25 +60,18 @@ const SegmentsTableRow = ({id, index, selectedResources, name, status, size = 0,
                 </TextStyle>
             </IndexTable.Cell>
             <IndexTable.Cell>
-                <Tag>
+                <Badge status={badgeStatus}>
                     {status}
-                </Tag>
+                </Badge>
             </IndexTable.Cell>
-            <IndexTable.Cell>{size}</IndexTable.Cell>
-            <div className={styles.Popover}>
-                <Popover
-                    id="segment-popover"
-                    active={isActionsActive}
-                    activator={activator}
-                    onClose={toggleActionsList}
-                >
-                    <Popover.Pane>
-                        <div>
-                            <ActionList items={bulkActions} />
-                        </div>
-                    </Popover.Pane>
-                </Popover>
-            </div>
+            <IndexTable.Cell>
+                {size}
+            </IndexTable.Cell>
+            <IndexTable.Cell flush>
+                <div className={classnames}>
+                    <TableRowPopover id={id} bulkActions={actions} /*setIsActionsDisable={setIsActionsDisable}*//>
+                </div>
+            </IndexTable.Cell>
         </IndexTable.Row>
     );
 };
