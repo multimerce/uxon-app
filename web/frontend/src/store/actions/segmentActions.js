@@ -23,7 +23,43 @@ export const updateSegmentAction = createRequestAction(`${PREFIX}/UPDATE`, (id, 
     request: {
         method: 'PATCH',
         url: `/segments/${id}`,
-        data,
+        data: {
+            segmentData: data,
+        },
+    },
+}));
+
+export const deleteSegmentAction = createRequestAction(
+    `${PREFIX}/DELETE`,
+    (id) => ({
+        request: {
+            method: 'DELETE',
+            url: `/segments/${id}`,
+        },
+    }),
+    (id) => ({id}),
+);
+
+export const duplicateSegmentAction = createRequestAction(
+    `${PREFIX}/DUPLICATE`,
+    (id) => ({
+        request: {
+            method: 'POST',
+            url: `/segments/${id}`,
+        },
+    }),
+    (id) => ({id}),
+);
+
+export const changeSegmentStatusAction = createRequestAction(`${PREFIX}/STATUS`, (id, newStatus) => ({
+    request: {
+        method: 'PATCH',
+        url: `/segments/${id}`,
+        data: {
+            segmentData: {
+                status: newStatus,
+            }
+        },
     },
 }));
 
