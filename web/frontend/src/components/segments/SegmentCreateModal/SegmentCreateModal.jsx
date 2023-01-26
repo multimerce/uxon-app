@@ -4,17 +4,30 @@ import {Modal} from '@shopify/polaris';
 import {createStructuredSelector} from 'reselect';
 import SegmentForm from '../SegmentForm/SegmentForm';
 import {segmentValidationsSchema} from '../../../utils/validators';
-import {segmentSelector, isLoading, createSegment, fetchSegment} from '../../../store';
+import {segmentSelector, isLoading, createSegment, fetchSegment, updateSegment} from '../../../store';
 
-const SegmentCreateModal = ({isOpenForm = false, closeForm, createNewSegment}) => {
+const SegmentCreateModal = ({isOpenForm = false, closeForm, segment, createNewSegment, editSegment}) => {
     const [conditions, setConditions] = useState([{}]);
     const [segmentName, setSegmentName] = useState('');
     const [segmentErrors, setSegmentsErrors] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
+    const [isNew, setIsNew] = useState(true);
+
+    useEffect(() => {
+        if (segment) {
+            setConditions(segment.conditions);
+            setSegmentName(segment.name);
+            setIsNew(false);
+        } else {
+            setConditions([{}]);
+            setSegmentName('');
+            setIsNew(false);
+        }
+    }, [segment, setConditions, setSegmentName, setIsNew, isOpen]);
 
     useEffect(() => {
         setSegmentsErrors(null);
-    }, [conditions, segmentName, setSegmentsErrors])
+    }, [conditions, segmentName, setSegmentsErrors]);
 
     const addCondition = useCallback((newConditions) => {
         setConditions((prevState) => [...prevState, {...newConditions}]);
@@ -33,7 +46,8 @@ const SegmentCreateModal = ({isOpenForm = false, closeForm, createNewSegment}) =
         setConditions([{}]);
         setSegmentName('');
         closeForm(false);
-    }, [closeForm, setSegmentName, setConditions, setSegmentsErrors]);
+        setIsNew(true);
+    }, [closeForm, setSegmentName, setConditions, setSegmentsErrors, setIsNew]);
 
     const handleOnClose = () => onCloseActions();
 
@@ -44,11 +58,11 @@ const SegmentCreateModal = ({isOpenForm = false, closeForm, createNewSegment}) =
             .validate(newData, { abortEarly: false })
             .then((res) => {
                 setSegmentsErrors(null);
-                createNewSegment(newData);
+                !isNew && segment ? editSegment(segment._id, newData) : createNewSegment(newData);
                 onCloseActions();
             })
             .catch((err) => {
-                const errors = err.inner.reduce((acc, item) => {
+                const errors = err?.inner?.reduce((acc, item) => {
                     let path;
                     if (item?.path && item.path.startsWith("conditions")) {
                         path = "conditions";
@@ -57,7 +71,7 @@ const SegmentCreateModal = ({isOpenForm = false, closeForm, createNewSegment}) =
                     }
                     acc[path] = item.message;
                     return acc;
-                }, {});
+                }, {}) || err;
 
                 setSegmentsErrors(errors);
             });
@@ -105,6 +119,7 @@ const mapState = createStructuredSelector({
 const mapDispatch = {
     fetchSegmentData: fetchSegment,
     createNewSegment: createSegment,
+    editSegment: updateSegment,
 };
 
 export default connect(mapState, mapDispatch)(SegmentCreateModal);
