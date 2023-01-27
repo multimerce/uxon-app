@@ -9,28 +9,43 @@ import {
 } from '@shopify/polaris';
 import {connect} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
-import {changeSegmentStatus, deleteSegment, duplicateSegment} from '../../../store';
+import {changeSegmentStatus, deleteSegment, duplicateSegment, fetchSegments} from '../../../store';
 import SegmentsTableRow from '../SegmentsTableRow/SegmentsTableRow';
 import {SEGMENTS_STATUSES} from '../../../common/constants/constants';
 import SegmentCreateModal from '../../segments/SegmentCreateModal/SegmentCreateModal';
 import styles from './SegmentsTable.module.scss';
 
-const SegmentsTable = ({segmentsList = [], onDelete, onChangeStatus, onDuplicate}) => {
+const SegmentsTable = ({segmentsList = {}, onDelete, onChangeStatus, onDuplicate, fetchSegmentsList}) => {
     const [segments, setSegments] = useState([]);
     const [queryValue, setQueryValue] = useState('');
     const [sortValue, setSortValue] = useState('name');
     const [selectedSegment, setSelectedSegment] = useState(null);
+    const [queryParams, setQueryParams] = useState({});
     // const [isActionsDisable, setIsActionsDisable] = useState(false);
     const [isOpenForm, setIsOpenForm] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        setSegments((prevState) => prevState.sort((segA, segB) => segB[sortValue] - segA[sortValue]));
-    }, [sortValue, queryValue, segments])
+        setSegments(segmentsList?.data || []);
+        setQueryParams({
+            total: segmentsList?.total,
+            page: segmentsList?.page,
+        });
+        setIsLoading(segmentsList?.loading)
+    }, [setSegments, segmentsList, setQueryParams, setIsLoading]);
+
+    const onFetchSegments = useCallback((params) => {
+        fetchSegmentsList(params)
+    }, [fetchSegmentsList]);
 
     useEffect(() => {
-        setSegments(segmentsList);
-    }, [setSegments, segmentsList]);
-
+        onFetchSegments({
+            skip: 0,
+            limit: 10,
+            search: queryValue,
+            sortBy: sortValue,
+        })
+    }, [queryValue, sortValue, onFetchSegments]);
 
     useEffect(() => {
         if (!isOpenForm) {
@@ -154,6 +169,7 @@ const SegmentsTable = ({segmentsList = [], onDelete, onChangeStatus, onDuplicate
                 }
                 onSelectionChange={handleSelectionChange}
                 hasMoreItems
+                loading={isLoading}
                 headings={[
                     {title: 'Name'},
                     {title: 'Status'},
@@ -179,6 +195,7 @@ const mapDispatch = {
     onDelete: deleteSegment,
     onChangeStatus: changeSegmentStatus,
     onDuplicate: duplicateSegment,
+    fetchSegmentsList: fetchSegments,
 };
 
 export default connect(mapState, mapDispatch)(SegmentsTable);
