@@ -6,10 +6,14 @@ import './CorePerformInfo.scss';
 
 const CorePerformInfo = ({analytics}) => {
     const [selected, setSelected] = useState('pastMonth');
-    const [commonAnalytics, setCommonAnalytics] = useState({});
+    const [commonAnalytics, setCommonAnalytics] = useState({
+        revenue: 0,
+        interactions: 0,
+        conversionRate: 0,
+    });
 
     useEffect(() => {
-        setCommonAnalytics(analytics);
+        Object.entries(analytics).length > 0 && setCommonAnalytics(analytics);
     }, [setCommonAnalytics, analytics]);
 
     const handleSelectChange = useCallback((value) => setSelected(value), []);

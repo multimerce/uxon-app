@@ -1,9 +1,10 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Card, DataTable, Stack, Tabs, Text} from '@shopify/polaris';
+import {Card, DataTable, Stack, Tabs, Text, EmptySearchResult} from '@shopify/polaris';
 import {ANALYTICS_TABS, TABLES} from '../../../common/constants/constants';
 import AnalyticsTableRow from '../AnalyticsTableRow/AnalyticsTableRow';
+import './SegmentsAnalytics.scss';
 
-const SegmentsAnalytics = ({fetchedAnalytics}) => {
+const SegmentsAnalytics = ({fetchedAnalytics = []}) => {
     const [selected, setSelected] = useState(0);
     const [sortedAnalytics, setSortedAnalytics] = useState(null);
 
@@ -16,7 +17,7 @@ const SegmentsAnalytics = ({fetchedAnalytics}) => {
     }, [setSortedAnalytics, fetchedAnalytics]);
 
     const columnTypes = useMemo(() => TABLES.analytics.map((item) => item.type), [TABLES]);
-    const sortableColumns= useMemo(() => TABLES.analytics.map((item) => item.sortable), [TABLES]);
+    const sortableColumns = useMemo(() => TABLES.analytics.map((item) => item.sortable), [TABLES]);
     const headings = useMemo(() => TABLES.analytics.map((item) =>
         <Text as='span' variant='bodyMd' fontWeight='bold'>{item.heading}</Text>), [TABLES]
     );
@@ -49,17 +50,27 @@ const SegmentsAnalytics = ({fetchedAnalytics}) => {
                 Segments analytics
             </Text>
             <Card>
-                <Tabs tabs={ANALYTICS_TABS} selected={selected} onSelect={handleTabChange}>
-                    <DataTable
-                        columnContentTypes={columnTypes}
-                        headings={headings}
-                        rows={rows}
-                        sortable={sortableColumns}
-                        defaultSortDirection='descending'
-                        initialSortColumnIndex={1}
-                        onSort={handleSort}
-                    />
-                </Tabs>
+                {
+                    fetchedAnalytics?.length === 0
+                        ? <div className='EmptyCard'>
+                            <EmptySearchResult
+                                title={'No analytics yet'}
+                                description={'Try changing the filters or search term'}
+                                withIllustration
+                            />
+                        </div>
+                        : <Tabs tabs={ANALYTICS_TABS} selected={selected} onSelect={handleTabChange}>
+                            <DataTable
+                                columnContentTypes={columnTypes}
+                                headings={headings}
+                                rows={rows}
+                                sortable={sortableColumns}
+                                defaultSortDirection='descending'
+                                initialSortColumnIndex={1}
+                                onSort={handleSort}
+                            />
+                        </Tabs>
+                }
             </Card>
         </Stack>
     );
