@@ -9,6 +9,7 @@ import {segmentSelector, isLoading, createSegment, fetchSegment, updateSegment} 
 const SegmentCreateModal = ({isOpenForm = false, closeForm, segment, createNewSegment, editSegment}) => {
     const [conditions, setConditions] = useState([{}]);
     const [segmentName, setSegmentName] = useState('');
+    const [segmentHandles, setSegmentHandles] = useState(['']);
     const [segmentErrors, setSegmentsErrors] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
     const [isNew, setIsNew] = useState(true);
@@ -18,12 +19,22 @@ const SegmentCreateModal = ({isOpenForm = false, closeForm, segment, createNewSe
             setConditions(segment.conditions);
             setSegmentName(segment.name);
             setIsNew(false);
+
+            if (Array.isArray(segment.handles) && segment.handles.length > 0) {
+                setSegmentHandles(segment.handles);
+            } else {
+                setSegmentHandles((prevState => prevState.concat(segment.name.toLowerCase().replaceAll(' ', '-'))))
+            }
         } else {
             setConditions([{}]);
             setSegmentName('');
             setIsNew(false);
         }
-    }, [segment, setConditions, setSegmentName, setIsNew, isOpen]);
+    }, [segment, setConditions, setSegmentName, setIsNew, isOpen, setSegmentHandles]);
+
+    useEffect(() => {
+        setSegmentHandles((prevState => prevState.concat(segmentName.toLowerCase().replaceAll(' ', '-'))))
+    },[segmentName, setSegmentHandles]);
 
     useEffect(() => {
         setSegmentsErrors(null);
@@ -104,6 +115,8 @@ const SegmentCreateModal = ({isOpenForm = false, closeForm, segment, createNewSe
                         segmentName={segmentName}
                         setSegmentName={setSegmentName}
                         errors={segmentErrors}
+                        segmentHandles={segmentHandles}
+                        setSegmentHandles={setSegmentHandles}
                     />
                 </Modal.Section>
             </Modal>

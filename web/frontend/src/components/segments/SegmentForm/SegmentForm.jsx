@@ -1,16 +1,20 @@
 import React, {useCallback} from 'react';
-import {TextStyle, FormLayout, TextField, Icon, Stack} from '@shopify/polaris';
+import {TextStyle, FormLayout, TextField, Icon, Stack, Text} from '@shopify/polaris';
 import {AlertMinor} from '@shopify/polaris-icons';
 import SegmentConditionsList from '../SegmentConditionsList/SegmentConditionsList';
 import styles from './SegmentForm.module.scss';
 
 const SegmentForm = (props) => {
-    const {conditions, addCondition, removeCondition, setConditions, segmentName, setSegmentName, errors} = props;
+    const {conditions, addCondition, removeCondition, setConditions, segmentName, setSegmentName, errors, segmentHandles, setSegmentHandles} = props;
     const handleChangeName = useCallback((newName) => {
         setSegmentName(newName)
     }, [setSegmentName]);
 
     const setErrors = (fieldName) => (errors && errors[fieldName]) && errors[fieldName];
+
+    const renderHandles = segmentHandles.map((handle) => {
+        return <Text as='span' variant='bodyMd' fontWeight='bold'>{handle}</Text>
+    });
 
     return (
         <FormLayout>
@@ -22,6 +26,10 @@ const SegmentForm = (props) => {
                 autoComplete='off'
                 error={setErrors('name')}
             />
+
+            {/*<Text as='span' variant='bodyMd'>Handle:</Text>*/}
+
+            {/*{renderHandles}*/}
 
             <hr/>
 
