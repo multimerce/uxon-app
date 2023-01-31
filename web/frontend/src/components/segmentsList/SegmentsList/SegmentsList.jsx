@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {Tabs} from '@shopify/polaris';
 import SegmentsTable from '../SegmentsTable/SegmentsTable';
 import {segmentsSelector} from '../../../store';
+import {SEGMENTS_TABS} from '../../../common/constants/constants';
 import './SegmentsList.scss';
 
 const SegmentsList = ({segmentsList}) => {
@@ -20,38 +21,19 @@ const SegmentsList = ({segmentsList}) => {
         [setSelected],
     );
 
-    const tabs = [
-        {
-            id: 'all',
-            content: 'All',
-        },
-        {
-            id: 'inUse',
-            content: 'In use',
-        },
-        {
-            id: 'ready',
-            content: 'Ready',
-        },
-        {
-            id: 'archived',
-            content: 'Archived',
-        },
-    ];
-
     const prepareSegmentsList = useCallback(() => {
         if (segments?.data && Array.isArray(segments.data)) {
             if (selected === 0) {
                 return {...segments, data: segments.data};
             } else {
-                return {...segments, data: segments.data.filter(({status}) => status === tabs[selected].id)};
+                return {...segments, data: segments.data.filter(({status}) => status === SEGMENTS_TABS[selected].id)};
             }
         }
     }, [segments, selected]);
 
     return (
         <div className='ListMainContainer'>
-            <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
+            <Tabs tabs={SEGMENTS_TABS} selected={selected} onSelect={handleTabChange}>
                 <SegmentsTable segmentsList={prepareSegmentsList()}/>
             </Tabs>
         </div>

@@ -19,6 +19,7 @@ const SegmentsTable = ({segmentsList = {}, onDelete, onChangeStatus, onDuplicate
     const [segments, setSegments] = useState([]);
     const [queryValue, setQueryValue] = useState('');
     const [sortValue, setSortValue] = useState('name');
+    const [sortOrder, setSortOrder] = useState(-1);
     const [selectedSegment, setSelectedSegment] = useState(null);
     const [queryParams, setQueryParams] = useState({});
     // const [isActionsDisable, setIsActionsDisable] = useState(false);
@@ -44,8 +45,9 @@ const SegmentsTable = ({segmentsList = {}, onDelete, onChangeStatus, onDuplicate
             limit: 10,
             search: queryValue,
             sortBy: sortValue,
+            order: sortOrder,
         })
-    }, [queryValue, sortValue, onFetchSegments]);
+    }, [queryValue, sortValue, sortOrder, onFetchSegments]);
 
     useEffect(() => {
         if (!isOpenForm) {
@@ -114,7 +116,9 @@ const SegmentsTable = ({segmentsList = {}, onDelete, onChangeStatus, onDuplicate
     const handleClearAll = useCallback(() => {
         handleQueryValueRemove();
     }, [handleQueryValueRemove]);
-    const handleSortChange = useCallback((value) => setSortValue(value), [setSortValue]);
+    const handleSortChange = useCallback((value) => {
+        setSortValue(value)
+    }, [setSortValue]);
 
     const renderTableRows = useMemo(() => {
         return (
