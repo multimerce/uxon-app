@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import classNames from 'classnames';
-import {IndexTable, TextStyle, Badge} from "@shopify/polaris";
+import {IndexTable, TextStyle, Badge} from '@shopify/polaris';
 import TableRowPopover from '../../common/TableRowPopover/TableRowPopover';
 import {SEGMENTS_STATUSES} from '../../../common/constants/constants';
 import styles from "../SegmentsTable/SegmentsTable.module.scss";
