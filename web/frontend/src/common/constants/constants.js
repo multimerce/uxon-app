@@ -120,3 +120,56 @@ export const CONDITIONS_DEFAULT_VALUES = {
 };
 
 export const SEGMENTS_STATUSES = ['archived', 'ready', 'inUse'];
+
+export const COMMON_ANALYTICS = {
+    revenue: {
+        title: 'Attributed revenue',
+        type: 'money',
+        amount: 1000,
+    },
+    interactions: {
+        title: 'Interactions',
+        type: 'number',
+        amount: 200,
+    },
+    conversionRate: {
+        title: 'Conversion rate',
+        type: 'percentage',
+        amount: 8.2,
+    },
+};
+
+export const ANALYTICS_TABS = [
+    {
+        id: 'all',
+        content: 'All'
+    }
+];
+
+export const SEGMENTS_TABS = [
+    {
+        id: 'all',
+        content: 'All',
+    },
+    {
+        id: 'inUse',
+        content: 'In use',
+    },
+    {
+        id: 'ready',
+        content: 'Ready',
+    },
+    {
+        id: 'archived',
+        content: 'Archived',
+    },
+];
+
+export const TABLES = {
+    analytics: [
+        { id: 'segments', heading: 'Segment', type: 'text', sortable: true },
+        { id: 'revenue', heading: 'Attributed revenue', type: 'numeric', sortable: true },
+        { id: 'interactions', heading: 'Interactions', type: 'numeric', sortable: true },
+        { id: 'affinity', heading: 'Affinity', type: 'text', sortable: false },
+    ]
+}
